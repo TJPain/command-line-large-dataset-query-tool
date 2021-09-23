@@ -75,35 +75,35 @@ class DiameterFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """Return NEO diameter"""
+        """Return the NEO's diameter"""
         return approach.neo.diameter
 
 class HazardousFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """Return NEO hazardous classification"""
+        """Return the NEO's hazardous classification"""
         return approach.neo.hazardous
 
 class DateFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """Return close approach date"""
+        """Return the close approach's date"""
         return approach.time.date()
 
 class DistanceFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """Return close approach distance"""
+        """Return the close approach's distance"""
         return approach.distance
 
 class VelocityFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """Return close approach velocity"""
+        """Return the close approach's velocity"""
         return approach.velocity
 
 def create_filters(
