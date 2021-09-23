@@ -42,9 +42,20 @@ class NEODatabase:
         self._neos = neos
         self._approaches = approaches
 
-        # TODO: What additional auxiliary data structures will be useful?
+        # Additonal temporary data structures:
 
-        # TODO: Link together the NEOs and their close approaches.
+        self.designation_dict = {}
+        self.name_dict = {}
+
+        for neo in self._neos:
+            self.designation_dict[neo.designation] = neo
+            if neo.name:
+                self.name_dict[neo.name] = neo
+
+        for approach in self._approaches:
+            approach.neo = self.designation_dict.get(approach._designation)
+            if approach.neo:
+                self.designation_dict[approach._designation].approaches.append(approach)
 
     def get_neo_by_designation(self, designation):
         """Find and return an NEO by its primary designation.
@@ -59,8 +70,8 @@ class NEODatabase:
         :param designation: The primary designation of the NEO to search for.
         :return: The `NearEarthObject` with the desired primary designation, or `None`.
         """
-        # TODO: Fetch an NEO by its primary designation.
-        return None
+
+        return self.designation_dict.get(designation)
 
     def get_neo_by_name(self, name):
         """Find and return an NEO by its name.
@@ -76,8 +87,7 @@ class NEODatabase:
         :param name: The name, as a string, of the NEO to search for.
         :return: The `NearEarthObject` with the desired name, or `None`.
         """
-        # TODO: Fetch an NEO by its name.
-        return None
+        return self.name_dict.get(name)
 
     def query(self, filters=()):
         """Query close approaches to generate those that match a collection of filters.
@@ -93,6 +103,10 @@ class NEODatabase:
         :param filters: A collection of filters capturing user-specified criteria.
         :return: A stream of matching `CloseApproach` objects.
         """
-        # TODO: Generate `CloseApproach` objects that match all of the filters.
-        for approach in self._approaches:
-            yield approach
+        if filters:
+            for approach in self._approaches:
+                if all(map(lambda x: x(approach), filters)):
+                    yield approach
+        else:
+            for approach in self._approaches:
+                yield approach
