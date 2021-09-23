@@ -124,3 +124,38 @@ class CloseApproach:
         """Return `repr(self)`, a computer-readable string representation of this object."""
         return f"CloseApproach(time={self.time_str!r}, distance={self.distance:.2f}, " \
                f"velocity={self.velocity:.2f}, neo={self.neo!r})"
+
+    def serialize(self, extension):
+        """Serialize CVS and JSON data.
+        :param extension: must be '.csv' or '.json' and should throw a ValueError if not.
+        :return: A serialized dictionary to be used in 'write_to_json' and in 'write_to_csv' in 'write.py'.
+        """
+        # Serialize CSV:
+        if extension == 'csv':
+            serialized_data = {'datetime_utc': self.time_str,
+                                'distance_au': self.distance,
+                                'velocity_km_s': self.velocity,
+                                'designation': self.neo.designation,
+                                'name': self.neo.name,
+                                'diameter_km': self.neo.diameter,
+                                'potentially_hazardous': self.neo.hazardous
+                                }
+            return serialized_data
+
+        # Serialize JSON:
+        if extension == 'json':
+            serialized_data = {'datetime_utc': self.time_str,
+                                'distance_au': self.distance,
+                                'velocity_km_s': self.velocity,
+                                'neo': {'designation': self.neo.designation,
+                                        'name': self.neo.name,
+                                        'diameter_km': self.neo.diameter,
+                                        'potentially_hazardous':
+                                        self.neo.hazardous
+                                        }
+                                }
+            return serialized_data
+
+        # Raise ValueError if file extension is invalid:
+        if extension not in ('csv', 'json'):
+            raise ValueError(f"Invalid file extension. Please use csv or json")
