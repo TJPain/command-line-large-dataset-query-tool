@@ -17,6 +17,7 @@ iterator.
 
 You'll edit this file in Tasks 3a and 3c.
 """
+import datetime
 import operator
 import itertools
 
@@ -78,41 +79,46 @@ class AttributeFilter:
 
 
 class DateFilter(AttributeFilter):
+    """Subclass of AttributeFilter"""
 
     @classmethod
-    def get(cls, approach):
+    def get(cls, approach) -> datetime:
         """Return the close approach's date"""
         return approach.time.date()
 
 
 class DistanceFilter(AttributeFilter):
+    """Subclass of AttributeFilter"""
 
     @classmethod
-    def get(cls, approach):
+    def get(cls, approach) -> float:
         """Return the close approach's distance"""
         return approach.distance
 
 
 class VelocityFilter(AttributeFilter):
+    """Subclass of AttributeFilter"""
 
     @classmethod
-    def get(cls, approach):
+    def get(cls, approach) -> float:
         """Return the close approach's velocity"""
         return approach.velocity
 
 
 class DiameterFilter(AttributeFilter):
+    """Subclass of AttributeFilter"""
 
     @classmethod
-    def get(cls, approach):
+    def get(cls, approach) -> float:
         """Return the NEO's diameter"""
         return approach.neo.diameter
 
 
 class HazardousFilter(AttributeFilter):
+    """Subclass of AttributeFilter"""
 
     @classmethod
-    def get(cls, approach):
+    def get(cls, approach) -> bool:
         """Return the NEO's hazardous classification"""
         return approach.neo.hazardous
 
@@ -164,36 +170,47 @@ def create_filters(
     :return: A collection of filters for use with `query`.
     """
 
+    # create an empty list for the user's filters
     filters = []
 
     if date is not None:
+        # append the date filter with the equal to operator
         filters.append(DateFilter(operator.eq, date))
 
     if start_date is not None:
+        # append the date filter with the greater than or equal to operator
         filters.append(DateFilter(operator.ge, start_date))
 
     if end_date is not None:
+        # append the date filter with the less than or equal to operator
         filters.append(DateFilter(operator.le, end_date))
 
     if distance_max is not None:
+        # append the distance filter with the less than or equal to operator
         filters.append(DistanceFilter(operator.le, distance_max))
 
     if distance_min is not None:
+        # append the distance filter with the greater than or equal to operator
         filters.append(DistanceFilter(operator.ge, distance_min))
 
     if velocity_max is not None:
+        # append the velocity filter with the less than or equal to operator
         filters.append(VelocityFilter(operator.le, velocity_max))
 
     if velocity_min is not None:
+        # append the velocity filter with the greater than or equal to operator
         filters.append(VelocityFilter(operator.ge, velocity_min))
 
     if diameter_max is not None:
+        # append the diameter filter with the less than or equal to operator
         filters.append(DiameterFilter(operator.le, diameter_max))
 
     if diameter_min is not None:
+        # append the diameter filter with the greater than or equal to operator
         filters.append(DiameterFilter(operator.ge, diameter_min))
 
     if hazardous is not None:
+        # append the hazardous filter with the equal to operator
         filters.append(HazardousFilter(operator.eq, hazardous))
 
     return filters
@@ -208,6 +225,8 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
+
     if n == 0:
         n = None
+
     return itertools.islice(iterator, n)

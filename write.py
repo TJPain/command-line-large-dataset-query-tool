@@ -47,15 +47,9 @@ def write_to_json(results, filename):
     :param filename: A Path-like object pointing to where the data should be
     saved.
     """
-    approaches_fieldnames = ('datetime_utc', 'distance_au', 'velocity_km_s', 'neo')
-    neos_fieldnames = ('designation', 'name', 'diameter_km', 'potentially_hazardous')
 
-    output = list()
-
-    json_data = []
+    data = []
     for row in results:
-        json_data.append(row.serialize('json'))
-
-    # Write the results to a JSON file:
+        data.append(row.serialize('json'))
     with open(filename, 'w') as json_out:
-        json.dump(json_data, json_out, indent=2, allow_nan=True)
+        json.dump(data, json_out)

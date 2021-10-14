@@ -34,13 +34,14 @@ class NearEarthObject:
     `NEODatabase` constructor.
     """
 
-    def __init__(self, designation='', name=None, diameter=float('nan'), hazardous=False):
+    def __init__(self, designation='', name=None, hazardous=False,
+                 diameter=float('nan')):
         """Create a new `NearEarthObject`.
 
         :param info: A dictionary of excess keyword arguments supplied to the
         constructor.
         """
-        self.name = name if name != '' else None
+        self.name = None if name == '' else name
         self.designation = designation
         self.diameter = float(diameter) if diameter != '' else float('nan')
         self.hazardous = True if hazardous == 'Y' else False
@@ -50,10 +51,11 @@ class NearEarthObject:
 
     @property
     def fullname(self):
-        """Return a representation of the full name of this NEO."""
+        """Returns the full name of the NEO."""
         if self.name:
             return f"{self.designation} ({self.name})"
-        return f"{self.designation}"
+        else:
+            return f"{self.designation}"
 
     def __str__(self):
         """Return `str(self)`."""
@@ -62,9 +64,10 @@ class NearEarthObject:
                    f"{self.diameter:.3f} km and " \
                    f"{'is' if self.hazardous else 'is not'} " \
                    f"potentially hazardous."
-        return f"NEO {self.fullname}, " \
-               f"{'is' if self.hazardous else 'is not'} potentially " \
-               f"hazardous."
+        else:
+            return f"NEO {self.fullname}, " \
+                   f"{'is' if self.hazardous else 'is not'} potentially " \
+                   f"hazardous."
 
     def __repr__(self):
         """Return `repr(self)`, a computer-readable string representation
@@ -88,7 +91,8 @@ class CloseApproach:
     `NEODatabase` constructor.
     """
 
-    def __init__(self, distance=0.0, velocity=0.0, time='0001-Jan-01 00:00', neo=None):
+    def __init__(self, neo=None, velocity=0.0, distance=0.0,
+                 time='0001-Jan-01 00:00'):
         """Create a new `CloseApproach`.
 
         :param info: A dictionary of excess keyword arguments supplied to
@@ -119,7 +123,7 @@ class CloseApproach:
         """
         if self.time:
             return datetime_to_str(self.time)
-        return "an unknown date and time"
+        return "an unspecified date and time"
 
     @property
     def designation(self):
@@ -140,35 +144,34 @@ class CloseApproach:
                f"velocity={self.velocity:.2f}, " \
                f"neo={self.neo!r})"
 
-    def serialize(self, extension):
-        """Returns serialized data in CSV or JSON format
-        :params: accepts CSV and JSON file formats
+    def serialize(self, file_extension: str) -> dict:
+        """Converts JSON or CSV file date into a dictionary of serialized
+        data.
+        :params: file_extension accepts CSV and JSON
         :return: the data in a serialised dictionary
         """
 
-        if extension not in ('csv', 'json'):
-            raise ValueError(f"Invalid file extension")
-
-        if extension == 'csv':
-            data = {'datetime_utc': self.time_str,
-                    'distance_au': self.distance,
-                    'velocity_km_s': self.velocity,
-                    'designation': self.neo.designation,
-                    'name': self.neo.name,
-                    'diameter_km': self.neo.diameter,
-                    'potentially_hazardous': self.neo.hazardous
-                    }
-
-        else:
-            data = {'datetime_utc': self.time_str,
-                    'distance_au': self.distance,
-                    'velocity_km_s': self.velocity,
-                    'neo': {'designation': self.neo.designation,
-                            'name': self.neo.name,
-                            'diameter_km': self.neo.diameter,
+        if file_extension == 'json':
+            data = {'neo': {'name': self.neo.name,
+                            'designation': self.neo.designation,
                             'potentially_hazardous':
-                            self.neo.hazardous
-                            }
+                            self.neo.hazardous,
+                            'diameter_km': self.neo.diameter,
+                            },
+                    'datetime_utc': self.time_str,
+                    'velocity_km_s': self.velocity,
+                    'distance_au': self.distance,
                     }
-
-        return data
+            return data
+        elif file_extension == 'csv':
+            data = {'name': self.neo.name,
+                    'designation': self.neo.designation,
+                    'datetime_utc': self.time_str,
+                    'diameter_km': self.neo.diameter,
+                    'potentially_hazardous': self.neo.hazardous,
+                    'velocity_km_s': self.velocity,
+                    'distance_au': self.distance,
+                    }
+            return data
+        else:
+            raise ValueError('Invalid file extension')

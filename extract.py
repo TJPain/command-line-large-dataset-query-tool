@@ -33,8 +33,8 @@ def load_neos(neo_csv_path):
             neo = NearEarthObject(
                 designation=elem["pdes"],
                 name=elem["name"],
-                diameter=elem["diameter"],
                 hazardous=elem["pha"],
+                diameter=elem["diameter"],
             )
             neos.append(neo)
     return neos
